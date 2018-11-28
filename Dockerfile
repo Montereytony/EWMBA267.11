@@ -60,7 +60,6 @@ RUN conda install \
         r-tidyverse\
         r-readr  \
         ipython \
-        numpy \
         pandas \
     	plotnine \
     	matplotlib \
@@ -89,6 +88,7 @@ RUN export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_LD_LIBRARY_PATH
 RUN R CMD javareconf
 RUN Rscript -e 'install.packages(c("RWekajars","rpart.plot","zip","gbm","R.methodsS3","R.oo","R.utils","officer","praise","testthat","mockery","githubinstall"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
 RUN pip install --upgrade pip
+RUN pip install numpy==1.13.3
 RUN pip install tensorflow
 #
 ##
