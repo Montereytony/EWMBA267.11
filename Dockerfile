@@ -25,12 +25,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ap
     apt -y autoremove &&\
     apt-get clean  
 
+
 #Removed
 # xls
-# xlsxjars
 # OpenMx
 RUN Rscript -e 'install.packages(c("RcppEigen", "StanHeaders", "rpf","nycflights13"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
-RUN conda install \
+RUN conda install  \
         gcc_linux-64 \
         gfortran_linux-64 \
         r-essentials \
@@ -39,6 +39,7 @@ RUN conda install \
         r-e1071 \
         r-rgl \
         r-xlsxjars \
+        r-xlsx \
         r-aer  \
         r-png \
         r-rJava \
