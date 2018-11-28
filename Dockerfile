@@ -11,11 +11,12 @@
 
 FROM jupyter/datascience-notebook:latest
 USER root
-RUN ln -s /bin/tar /bin/gtar   && apt-get -y update && apt-get -y upgrade
+RUN ln -s /bin/tar /bin/gtar   && apt-get -y update --fix-missing && apt-get -y upgrade
+ENV R_BASE_VERSION 3.5.1
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils \
     software-properties-common byobu curl git htop man unzip vim wget libcairo2-dev libxt-dev  \
     libjpeg-dev libpango1.0-dev libgif-dev build-essential g++ pandoc automake pkg-config  \
-    libtool software-properties-common gsl-bin libgsl-dev  unixodbc   r-cran-rmpi  libwebp-dev &&\
+    libtool software-properties-common gsl-bin libgsl-dev  unixodbc   r-cran-rmpi  libwebp-dev r-base &&\
     add-apt-repository ppa:webupd8team/java -y && \
     echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
     apt-get install -y oracle-java8-installer && \
@@ -25,15 +26,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ap
     apt -y autoremove &&\
     apt-get clean  
 
-
-#Removed
-# xls
-# OpenMx
-# r-xlsxjars \
-# r-xlsx \
-
+RUN Rscript -e 'install.packages(c("devtools","methods","jsonlite"), dependencies=TRUE,repos = "https://cloud.r-project.org")' 
+RUN pip install --upgrade pip
+RUN pip install numpy==1.13.3 && pip install tensorflow
+#
 RUN Rscript -e 'install.packages(c("RcppEigen", "StanHeaders", "rpf","nycflights13"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
-RUN conda install  \
+RUN conda update -n base conda  && \
+    conda install  \
         gcc_linux-64 \
         gfortran_linux-64 \
         r-essentials \
@@ -73,27 +72,24 @@ RUN conda install  \
     	python-utils \
         proj4
 
-RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/ggplot2_2.2.1.tar.gz"),dependencies = TRUE)'
-RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/Cairo_1.5-9.tar.gz"),dependencies = TRUE)'
-RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/gdtools_0.1.7.tar.gz"),dependencies = TRUE)'
-RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/Archive/truncnorm/truncnorm_1.0.0.tar.gz"),dependencies = TRUE)'
-RUN Rscript -e 'install.packages(c("pdftools","Rsolnp","LSAmitR", "Rgraphviz", "graph", "rsample", "proxy", "slam", "Rcampdf", "tm.lexicon.GeneralInquirer", "VGAM", "impute", "truncnorm","truncnorm","checkmate", "latticeExtra", "acepack", "htmlTable", "viridis", "brew", "desc", "commonmark", "Hmisc", "roxygen2", "DT","dencies", "mice", "CDM", "mitools", "sirt", "TAM"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
-RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/miceadds_2.12-24.tar.gz"),dependencies = TRUE)'
-RUN Rscript -e 'install.packages(c("mockery", "praise", "rex", "fontBitstreamVera", "fontLiberation", "testthat", "covr", "fontquiver", "svglite", "pbdZQM","r-igraph","wordcould","DRR", "webshot","mclust","pracma","ggdendro","reshape","prettyunits","progress","GGally","multiwayvcov","wordcloud2","openxlsx","rio","survey","coda","mvtnorm","sfsmisc","polucor","CDM","TAM","mitools"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
-#
-RUN Rscript -e 'install.packages(c("slam","GPArotation","permute","vegan","pbivnorm","numDeriv","Archive","lavaan","lavaan.survey","sirt","RcppRoll","DEoptimR","robustbase","gower","kernlab","CVST","DRR","SQUAREM","lava","prodlim","ddalpha","dimRed","ipred","recipes","withr","caret","neuralnet","irlba","kknn","gtools","gdata","caTools","gplots","ROCR","MLmetrics","dummies","slam","NLP","tm","clipr","ggalt","truncnorm"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
-#
+#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/ggplot2_2.2.1.tar.gz"),dependencies = TRUE)'
+#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/Cairo_1.5-9.tar.gz"),dependencies = TRUE)'
+#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/gdtools_0.1.7.tar.gz"),dependencies = TRUE)'
+#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/Archive/truncnorm/truncnorm_1.0.0.tar.gz"),dependencies = TRUE)'
+#RUN Rscript -e 'install.packages(c("pdftools","Rsolnp","LSAmitR", "Rgraphviz", "graph", "rsample", "proxy", "slam", "Rcampdf", "tm.lexicon.GeneralInquirer", "VGAM", "impute", "truncnorm","truncnorm","checkmate", "latticeExtra", "acepack", "htmlTable", "viridis", "brew", "desc", "commonmark", "Hmisc", "roxygen2", "DT","dencies", "mice", "CDM", "mitools", "sirt", "TAM"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
+#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/miceadds_2.12-24.tar.gz"),dependencies = TRUE)'
+#RUN Rscript -e 'install.packages(c("mockery", "praise", "rex", "fontBitstreamVera", "fontLiberation", "testthat", "covr", "fontquiver", "svglite", "pbdZQM","r-igraph","wordcould","DRR", "webshot","mclust","pracma","ggdendro","reshape","prettyunits","progress","GGally","multiwayvcov","wordcloud2","openxlsx","rio","survey","coda","mvtnorm","sfsmisc","polucor","CDM","TAM","mitools"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
+##
+#RUN Rscript -e 'install.packages(c("slam","GPArotation","permute","vegan","pbivnorm","numDeriv","Archive","lavaan","lavaan.survey","sirt","RcppRoll","DEoptimR","robustbase","gower","kernlab","CVST","DRR","SQUAREM","lava","prodlim","ddalpha","dimRed","ipred","recipes","withr","caret","neuralnet","irlba","kknn","gtools","gdata","caTools","gplots","ROCR","MLmetrics","dummies","slam","NLP","tm","clipr","ggalt","truncnorm"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
+##
 ## NB extensions is not working when running it in jupyterhub kubernetes so adding this next line
 RUN conda install -c conda-forge jupyter_contrib_nbextensions
 RUN jupyter nbextension install --py widgetsnbextension --sys-prefix
 RUN jupyter nbextension enable  --py widgetsnbextension --sys-prefix
 RUN export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_LD_LIBRARY_PATH
 RUN R CMD javareconf
-RUN Rscript -e 'install.packages(c("RWekajars","rpart.plot","zip","gbm","R.methodsS3","R.oo","R.utils","officer","praise","testthat","mockery","githubinstall"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
-RUN pip install --upgrade pip
-RUN pip install numpy==1.13.3
-RUN pip install tensorflow
-#
+#RWekajars removed
+RUN Rscript -e 'install.packages(c("rpart.plot","zip","gbm","R.methodsS3","R.oo","R.utils","officer","praise","testthat","mockery","githubinstall"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
 ##
 ## This should allow users to turn off extension if they do not want them.
 ##
