@@ -13,6 +13,7 @@ FROM jupyter/datascience-notebook:latest
 USER root
 RUN ln -s /bin/tar /bin/gtar   && apt-get -y update --fix-missing && apt-get -y upgrade
 ENV R_BASE_VERSION 3.5.1
+RUN pip install --upgrade pip
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils \
     software-properties-common byobu curl git htop man unzip vim wget libcairo2-dev libxt-dev  \
     libjpeg-dev libpango1.0-dev libgif-dev build-essential g++ pandoc automake pkg-config  \
@@ -26,9 +27,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ap
     apt -y autoremove &&\
     apt-get clean  
 
+RUN pip install numpy scipy matplotlib pandas sympy nose  tensorflow
+#RUN pip install numpy==1.13.3 && pip install tensorflow
 RUN Rscript -e 'install.packages(c("devtools","methods","jsonlite"), dependencies=TRUE,repos = "https://cloud.r-project.org")' 
-RUN pip install --upgrade pip
-RUN pip install numpy==1.13.3 && pip install tensorflow
 #
 RUN Rscript -e 'install.packages(c("RcppEigen", "StanHeaders", "rpf","nycflights13"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
 RUN conda update -n base conda  && \
@@ -62,9 +63,7 @@ RUN conda update -n base conda  && \
         r-tidyverse\
         r-readr  \
         ipython \
-        pandas \
     	plotnine \
-    	matplotlib \
     	seaborn \
     	phantomjs  \
     	statsmodels \
@@ -83,6 +82,7 @@ RUN conda update -n base conda  && \
 #RUN Rscript -e 'install.packages(c("slam","GPArotation","permute","vegan","pbivnorm","numDeriv","Archive","lavaan","lavaan.survey","sirt","RcppRoll","DEoptimR","robustbase","gower","kernlab","CVST","DRR","SQUAREM","lava","prodlim","ddalpha","dimRed","ipred","recipes","withr","caret","neuralnet","irlba","kknn","gtools","gdata","caTools","gplots","ROCR","MLmetrics","dummies","slam","NLP","tm","clipr","ggalt","truncnorm"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
 ##
 ## NB extensions is not working when running it in jupyterhub kubernetes so adding this next line
+RUN pip install h5py==2.8.0
 RUN conda install -c conda-forge jupyter_contrib_nbextensions
 RUN jupyter nbextension install --py widgetsnbextension --sys-prefix
 RUN jupyter nbextension enable  --py widgetsnbextension --sys-prefix
