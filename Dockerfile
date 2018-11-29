@@ -71,11 +71,6 @@ RUN conda update -n base conda  && \
     	python-utils \
         proj4
 
-#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/ggplot2_2.2.1.tar.gz"),dependencies = TRUE)'
-#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/Cairo_1.5-9.tar.gz"),dependencies = TRUE)'
-#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/gdtools_0.1.7.tar.gz"),dependencies = TRUE)'
-#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/Archive/truncnorm/truncnorm_1.0.0.tar.gz"),dependencies = TRUE)'
-#RUN Rscript -e 'install.packages(c("pdftools","Rsolnp","LSAmitR", "Rgraphviz", "graph", "rsample", "proxy", "slam", "Rcampdf", "tm.lexicon.GeneralInquirer", "VGAM", "impute", "truncnorm","truncnorm","checkmate", "latticeExtra", "acepack", "htmlTable", "viridis", "brew", "desc", "commonmark", "Hmisc", "roxygen2", "DT","dencies", "mice", "CDM", "mitools", "sirt", "TAM"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
 #RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/miceadds_2.12-24.tar.gz"),dependencies = TRUE)'
 #RUN Rscript -e 'install.packages(c("mockery", "praise", "rex", "fontBitstreamVera", "fontLiberation", "testthat", "covr", "fontquiver", "svglite", "pbdZQM","r-igraph","wordcould","DRR", "webshot","mclust","pracma","ggdendro","reshape","prettyunits","progress","GGally","multiwayvcov","wordcloud2","openxlsx","rio","survey","coda","mvtnorm","sfsmisc","polucor","CDM","TAM","mitools"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
 ##
@@ -90,8 +85,23 @@ RUN export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_LD_LIBRARY_PATH
 RUN R CMD javareconf
 #RWekajars removed
 RUN Rscript -e 'install.packages(c("rpart.plot","zip","gbm","R.methodsS3","R.oo","R.utils","officer","praise","testthat","mockery","githubinstall"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
+RUN apt-get install -y libudunits2-dev libgdal-dev libgdal20 libosmium2-dev sqlite3 libsqlite3-dev libpoppler-cpp-dev
+RUN conda update sqlite
+RUN Rscript -e 'install.packages(c("pdftools","units","ggplot2","Cairo","gdtools"), dependencies=TRUE,repos = "https://cran.rstudio.com")' 
+#RUN Rscript -e 'install.packages(c("Rsolnp","LSAmitR", "Rgraphviz",
+#RUN Rscript -e 'install.packages(c("graph", "rsample", "proxy", "slam", "Rcampdf", "tm.lexicon.GeneralInquirer", "VGAM", "impute", "truncnorm","truncnorm","checkmate", "latticeExtra", "acepack", "htmlTable", "viridis", "brew", "desc", "commonmark", "Hmisc", "roxygen2", "DT","dencies", "mice", "CDM", "mitools", "sirt", "TAM"),repos = "https://cloud.r-project.org",dependencies = TRUE)'
+#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/gdtools_0.1.7.tar.gz"),dependencies = TRUE)'
+#RUN Rscript -e 'install.packages(c("https://cran.r-project.org/src/contrib/Archive/truncnorm/truncnorm_1.0.0.tar.gz"),dependencies = TRUE)'
 ##
 ## This should allow users to turn off extension if they do not want them.
 ##
 USER jovyan
 RUN jupyter nbextensions_configurator enable
+
+#1: packages ‘LSAmitR’, ‘Rgraphviz’, ‘graph’, ‘Rcampdf’, ‘tm.lexicon.GeneralInquirer’, ‘impute’, ‘dencies’ are not available (for R version 3.4.1)
+#2: In install.packages(c("Rsolnp", "LSAmitR", "Rgraphviz", "graph",  :
+#  installation of package ‘raster’ had non-zero exit status
+#3: In install.packages(c("Rsolnp", "LSAmitR", "Rgraphviz", "graph",  :
+#  installation of package ‘rasterVis’ had non-zero exit status
+#4: In install.packages(c("Rsolnp", "LSAmitR", "Rgraphviz", "graph",  :
+#  installation of package ‘GDINA’ had non-zero exit status
